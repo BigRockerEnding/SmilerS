@@ -11,9 +11,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingUtilities;
 
 @SuppressWarnings("serial")
-public class SmilerS extends JPanel implements Runnable {
+public class SmilerSPanel extends JPanel implements Runnable {
+	private static final int INCH = 72; //points
+	
 	public static void main(String[] args) {
-		SwingUtilities.invokeLater(new SmilerS());
+		SwingUtilities.invokeLater(new SmilerSPanel());
 	}
 
 	@Override
