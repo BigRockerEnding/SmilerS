@@ -13,6 +13,8 @@ import javax.swing.SwingUtilities;
 @SuppressWarnings("serial")
 public class SmilerSPanel extends JPanel implements Runnable {
 	private static final int INCH = 72; //points
+	private static final Dimension US_LETTER = new Dimension((int)(8.5 * INCH), 11 * INCH);
+	private SmilerGraphic smiler = new SmilerGraphic();
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new SmilerSPanel());
@@ -22,7 +24,7 @@ public class SmilerSPanel extends JPanel implements Runnable {
 	public void run() {
 		JFrame frame = new JFrame("Smiler S");
 		frame.add(this);
-		frame.setPreferredSize(new Dimension(500, 500));
+		this.setPreferredSize(US_LETTER);
 		frame.setResizable(false);
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		frame.pack();
@@ -31,13 +33,15 @@ public class SmilerSPanel extends JPanel implements Runnable {
 	
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		this.setBackground(Color.BLACK);
-		g2.setStroke(new BasicStroke(5));
-		g2.setColor(Color.YELLOW);
-		g2.fillOval(0, 0, getWidth(), getHeight());
-		g2.setColor(new Color(138, 43, 226));
-		g2.drawArc(125, 125, 250, 250, 225, 90);
-		g2.fillOval(125, 50, 62, 125);
-		g2.fillOval(281, 50, 62, 125);
+		this.setBackground(Color.WHITE);
+		for (int i = INCH / 2; i < getWidth(); i += INCH / 2) {
+			g2.drawLine(i, 0, i, getHeight());
+		}
+		for (int i = INCH / 2; i < getHeight(); i += INCH / 2) {
+			g2.drawLine(0, i, getWidth(), i);
+		}
+		g2.translate(INCH, 0);
+		g2.rotate(Math.PI / 2);
+		smiler.drawSelf(g2);
 	}
 }
