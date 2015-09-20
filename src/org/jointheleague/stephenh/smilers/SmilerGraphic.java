@@ -8,10 +8,9 @@ public class SmilerGraphic {
 	private static final int INCH = 72; //points
 	private static final int UNIT = INCH / 8;
 	
-	
 	public void drawSelf(Graphics2D g2) {
 		g2.setStroke(new BasicStroke(5));
-		g2.setColor(Color.GREEN);
+		g2.setColor(Color.GRAY);
 		g2.fillOval(0, 0, INCH, INCH);
 		g2.setColor(Color.RED);
 		g2.drawArc(UNIT, UNIT, 6 * UNIT, 6 * UNIT, 225, 90);
