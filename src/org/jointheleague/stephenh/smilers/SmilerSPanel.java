@@ -8,6 +8,7 @@ import java.awt.Graphics2D;
 import java.awt.RenderingHints;
 import java.awt.Stroke;
 import java.awt.geom.AffineTransform;
+import java.awt.image.BufferedImage;
 import java.time.LocalTime;
 
 import javax.swing.JFrame;
@@ -23,6 +24,7 @@ public class SmilerSPanel extends JPanel implements Runnable {
 	private static final Dimension US_LETTER = new Dimension((int)(8.5 * INCH), 11 * INCH);
 	private SmilerGraphic smiler = new SmilerGraphic();
 	private Stroke fatStroke = new BasicStroke(5);
+	private BufferedImage back;
 	
 	public static void main(String[] args) {
 		SwingUtilities.invokeLater(new SmilerSPanel());
@@ -37,13 +39,13 @@ public class SmilerSPanel extends JPanel implements Runnable {
 		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		new Timer(20, e -> repaint()).start();
 		frame.pack();
+		back = buildBack();
 		frame.setVisible(true);
 	}
 	
 	public void paintComponent(Graphics g) {
 		Graphics2D g2 = (Graphics2D) g;
-		this.setBackground(Color.WHITE);
-		gridLines(g2);
+		g2.drawImage(back, 0, 0, null);
 		g2.translate(getWidth() / 2, getHeight() / 2);
 		LocalTime now = LocalTime.now();
 		int hour = now.getHour();
@@ -59,13 +61,25 @@ public class SmilerSPanel extends JPanel implements Runnable {
 		g2.translate(-INCH / 2, -INCH / 2);
 	}
 
-	private void gridLines(Graphics2D g2) {
-		for (int i = INCH / 2; i < getWidth(); i += INCH / 2) {
-			g2.drawLine(i, 0, i, getHeight());
+	private BufferedImage buildBack() {
+		BufferedImage back = new BufferedImage(getWidth(), getHeight(), BufferedImage.TYPE_INT_ARGB);
+		Graphics2D g2 = back.createGraphics();
+		g2.setColor(Color.BLACK);
+		g2.translate(back.getWidth() / 2, back.getHeight() / 2);
+		AffineTransform orgin = g2.getTransform();
+		g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING, RenderingHints.VALUE_ANTIALIAS_ON);
+		for (int i = 0; i < 60; i++) {
+			g2.rotate(toRadians(360 / 60 * i));
+			if (i % 5 == 0) {
+				g2.setStroke(fatStroke);
+				g2.drawLine((int)(3.5 * INCH), 0, (int)(4 * INCH), 0);
+			} else {
+				g2.setStroke(new BasicStroke(3));
+				g2.drawLine((int)(3.5 * INCH), 0, (int)(3.75 * INCH), 0);
+			}
+			g2.setTransform(orgin);
 		}
-		for (int i = INCH / 2; i < getHeight(); i += INCH / 2) {
-			g2.drawLine(0, i, getWidth(), i);
-		}
+		return back;
 	}
 	
 	private void drawHour(Graphics2D g2, int hour, int min) {
@@ -91,7 +105,7 @@ public class SmilerSPanel extends JPanel implements Runnable {
 	
 	private void drawSec(Graphics2D g2, int sec) {
 		double angleHand = (360 / 60.0) * sec;
-		g2.rotate(angleHand);
+		g2.rotate(toRadians(angleHand));
 		g2.setStroke(fatStroke);
 		g2.setColor(Color.RED);
 		g2.drawLine(0, 0, 0, (int)(-2.5 * INCH));
